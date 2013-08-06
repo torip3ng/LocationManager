@@ -189,21 +189,17 @@
 #pragma mark Geocode methods
 
 - (void)geocodeAddressString:(NSString *)address resultHandler:(LMGeocodeResultHandler)resultBlock {
-    @synchronized (self) {
-        [_geoCoder geocodeAddressString:address completionHandler:^(NSArray *placemarks, NSError *error) {
-            resultBlock(placemarks, error);
-        }];
-    }
+    [_geoCoder geocodeAddressString:address completionHandler:^(NSArray *placemarks, NSError *error) {
+        resultBlock(placemarks, error);
+    }];
 }
 
 // -------------------------------------------------------------------------------
 
 - (void)reverseGeocodeLocation:(CLLocation *)location resultHandler:(LMGeocodeResultHandler)resultBlock {
-    @synchronized (self) {
-        [_geoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
-            resultBlock(placemarks, error);
-        }];
-    }
+    [_geoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+        resultBlock(placemarks, error);
+    }];
 }
 
 // -------------------------------------------------------------------------------
