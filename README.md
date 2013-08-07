@@ -7,8 +7,9 @@ LocationManager
 *   ARC
 *   CoreLocation Framework
 
-The MIT License (MIT)
 ---------------------
+
+### The MIT License (MIT)
 
 Copyright (c) 2013 Yaroslav Bulda
 
