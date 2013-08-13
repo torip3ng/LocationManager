@@ -29,7 +29,7 @@ typedef void (^LMOnceUpdateLocationResultHadler)(CLLocation *currentLocation, NS
 
 @interface LocationManager : NSObject
 
-@property (nonatomic) CLLocationAccuracy accuracy; //defaul kCLLocationAccuracyKilometer
+@property (nonatomic) CLLocationAccuracy accuracy; //default kCLLocationAccuracyKilometer
 
 // -------------------------------------------------------------------------------
 + (LocationManager*)sharedLocationManager;
