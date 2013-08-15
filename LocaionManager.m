@@ -284,7 +284,13 @@
 // -------------------------------------------------------------------------------
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-    NSArray *locations = @[oldLocation, newLocation];
+    NSArray *locations = nil;
+    
+    if (oldLocation)
+        locations = @[oldLocation, newLocation];
+    else
+        locations = @[newLocation];
+    
     [self updateCurrentLocationAndNotifyListeners:locations];
 }
 
