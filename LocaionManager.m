@@ -35,8 +35,6 @@
     return sharedLocationManager;
 }
 
-// -------------------------------------------------------------------------------
-
 #pragma mark -
 #pragma mark Lifecycle methods
 
@@ -57,14 +55,10 @@
     return self;
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)dealloc {
     CFArrayRemoveAllValues(_listeners);
     CFRelease(_listeners);
 }
-
-// -------------------------------------------------------------------------------
 
 - (void)commonInit {
     _accuracy = kCLLocationAccuracyKilometer;
@@ -73,8 +67,6 @@
     [_locationManager setDistanceFilter:kCLDistanceFilterNone];
     [_locationManager setDelegate:self];
 }
-
-// -------------------------------------------------------------------------------
 
 #pragma mark -
 #pragma mark Listeners
@@ -90,8 +82,6 @@
     }
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)removeListener:(id)listener {
     @synchronized (self) {
         CFIndex arrLength = CFArrayGetCount(_listeners);
@@ -103,8 +93,6 @@
     }
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)notifyListenersWithBlock:(void(^)(id listener))block {
     @synchronized (self) {
         CFIndex arrLength = CFArrayGetCount(_listeners);
@@ -115,8 +103,6 @@
     }
 }
 
-// -------------------------------------------------------------------------------
-
 #pragma mark -
 #pragma mark Setters / Getters 
 
@@ -125,28 +111,20 @@
     [_locationManager setDesiredAccuracy:_accuracy];
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)setCurrentLocation:(CLLocation *)location {
     [self stopUpdatingLocation];
     _currentLocation = location;
 }
-
-// -------------------------------------------------------------------------------
 
 - (void)setCurrentLocationWithCoordinates:(CLLocationCoordinate2D)coord {
     [self stopUpdatingLocation];
     _currentLocation = [[CLLocation alloc] initWithLatitude:coord.latitude longitude:coord.longitude];
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)setCurrentLocationWithLatitude:(CLLocationDegrees)latitude longitude:(CLLocationDegrees)longitude {
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(latitude, longitude);
     [self setCurrentLocationWithCoordinates:coord];
 }
-
-// -------------------------------------------------------------------------------
 
 - (void)setCurrentLocationByAddress:(NSString *)address resultHandler:(void(^)(CLPlacemark *placemark, NSError *error))resultBlock {
     @synchronized (self) {
@@ -165,25 +143,17 @@
     }
 }
 
-// -------------------------------------------------------------------------------
-
 - (CLLocation*)currentLocation {
     return _currentLocation;
 }
-
-// -------------------------------------------------------------------------------
 
 - (BOOL) isUpdatingLocation {
     return _isUpdatingLocation;
 }
 
-// -------------------------------------------------------------------------------
-
 - (BOOL)isGeocoding {
     return [_geoCoder isGeocoding];
 }
-
-// -------------------------------------------------------------------------------
 
 #pragma mark -
 #pragma mark Geocode methods
@@ -194,21 +164,15 @@
     }];
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)reverseGeocodeLocation:(CLLocation *)location resultHandler:(LMGeocodeResultHandler)resultBlock {
     [_geoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
         resultBlock(placemarks, error);
     }];
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)reverseGeocodeCurrentLocation:(LMGeocodeResultHandler)resultBlock {
     [self reverseGeocodeLocation:_currentLocation resultHandler:resultBlock];
 }
-
-// -------------------------------------------------------------------------------
 
 - (void)reverseGeocodeCoordinates:(CLLocationCoordinate2D)coord resultHandler:(LMGeocodeResultHandler)resultBlock {
     CLLocation *locatoin = [[CLLocation alloc] initWithLatitude:coord.latitude longitude:coord.longitude];
@@ -216,23 +180,17 @@
     [self reverseGeocodeLocation:locatoin resultHandler:resultBlock];
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)reverseGeocodeLatitude:(CLLocationDegrees)latitude longitude:(CLLocationDegrees)longitude resultHandler:(LMGeocodeResultHandler)resultBlock {
     CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(latitude, longitude);
     
     [self reverseGeocodeCoordinates:coord resultHandler:resultBlock];
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)cancelGeocode {
     @synchronized (self) {
         [_geoCoder cancelGeocode];
     }
 }
-
-// -------------------------------------------------------------------------------
 
 #pragma mark -
 #pragma mark CLLocationManager methods
@@ -245,8 +203,6 @@
     [_locationManager startUpdatingLocation];
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)updateLocationOnce:(LMOnceUpdateLocationResultHadler)resultBlock {
     _isUpdatingLocationOnce = YES;
     
@@ -258,21 +214,15 @@
     }
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)stopUpdatingLocation {
     _isUpdatingLocation = NO;
     _isUpdatingLocationOnce = NO;
     [_locationManager stopUpdatingLocation];
 }
 
-// -------------------------------------------------------------------------------
-
 - (CLAuthorizationStatus)authorizationStatus {
     return [CLLocationManager authorizationStatus];
 }
-
-// -------------------------------------------------------------------------------
 
 #pragma mark -
 #pragma mark CLLocationManager Delegate
@@ -280,8 +230,6 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     [self updateCurrentLocationAndNotifyListeners:locations];
 }
-
-// -------------------------------------------------------------------------------
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
     NSArray *locations = nil;
@@ -293,8 +241,6 @@
     
     [self updateCurrentLocationAndNotifyListeners:locations];
 }
-
-// -------------------------------------------------------------------------------
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     if (_isUpdatingLocationOnce) {
@@ -309,16 +255,12 @@
     }];
 }
 
-// -------------------------------------------------------------------------------
-
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     [self notifyListenersWithBlock:^(id listener) {
         if ([listener respondsToSelector:@selector(locationManagerDidChangeAuthorizationStatus:)])
             [listener locationManagerDidChangeAuthorizationStatus:status];
     }];
 }
-
-// -------------------------------------------------------------------------------
 
 - (void) updateCurrentLocationAndNotifyListeners:(NSArray*)locations {
     if (!_isUpdatingLocation)
@@ -338,8 +280,6 @@
     }];
 }
 
-// -------------------------------------------------------------------------------
-
 #pragma mark -
 #pragma mark Distance methods
 
@@ -347,12 +287,8 @@
     return [toLocation distanceFromLocation:fromLocation];
 }
 
-// -------------------------------------------------------------------------------
-
 - (CLLocationDistance)distanceFromCurrentLocationToLocation:(CLLocation *)toLocation {
     return [self distanceFromLocation:_currentLocation toLocation:toLocation];
 }
-
-// -------------------------------------------------------------------------------
 
 @end
